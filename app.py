@@ -393,48 +393,48 @@ if st.session_state.show_recommendations and st.session_state.favorites:
         if st.button("🔙 Back to Browse", key="back_browse_main"):
             st.session_state.show_recommendations = False
             st.rerun()
-            
-            # Get full data with posters for recommendations
-            rec_movies = recommender.full_df[recommender.full_df['title'].isin(results['title'].tolist())]
-            
-            st.markdown(f"### 🎬 Top {len(results)} Recommendations for You")
-            
-            # Display in grid
-            cols_per_row = 4
-            for i in range(0, len(results), cols_per_row):
-                cols = st.columns(cols_per_row)
-                for j, col in enumerate(cols):
-                    if i + j < len(results):
-                        row = results.iloc[i + j]
-                        movie_data = rec_movies[rec_movies['title'] == row['title']]
+        
+        # Get full data with posters for recommendations
+        rec_movies = recommender.full_df[recommender.full_df['title'].isin(results['title'].tolist())]
+        
+        st.markdown(f"### 🎬 Top {len(results)} Recommendations for You")
+        
+        # Display in grid
+        cols_per_row = 4
+        for i in range(0, len(results), cols_per_row):
+            cols = st.columns(cols_per_row)
+            for j, col in enumerate(cols):
+                if i + j < len(results):
+                    row = results.iloc[i + j]
+                    movie_data = rec_movies[rec_movies['title'] == row['title']]
+                    
+                    with col:
+                        # Get poster
+                        poster_path = movie_data['poster_path'].values[0] if len(movie_data) > 0 and 'poster_path' in movie_data.columns else ""
+                        poster_url = get_poster_url(poster_path)
                         
-                        with col:
-                            # Get poster
-                            poster_path = movie_data['poster_path'].values[0] if len(movie_data) > 0 and 'poster_path' in movie_data.columns else ""
-                            poster_url = get_poster_url(poster_path)
-                            
-                            # Display movie card
-                            st.markdown(f"""
-                                <div class="movie-card">
-                                    <img src="{poster_url}" class="movie-poster" alt="{row['title']}">
-                                    <div class="movie-info">
-                                        <p class="movie-title">{row['title']}</p>
-                                        <p class="movie-rating">⭐ {row['vote_average']:.1f} | Match: {row['match_%']:.0f}%</p>
-                                    </div>
+                        # Display movie card
+                        st.markdown(f"""
+                            <div class="movie-card">
+                                <img src="{poster_url}" class="movie-poster" alt="{row['title']}">
+                                <div class="movie-info">
+                                    <p class="movie-title">{row['title']}</p>
+                                    <p class="movie-rating">⭐ {row['vote_average']:.1f} | Match: {row['match_%']:.0f}%</p>
                                 </div>
-                            """, unsafe_allow_html=True)
-                            
-                            st.caption(f"🎭 {row['genres'][:50]}...")
-            
-            # Download option
-            st.markdown("---")
-            csv = results.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Recommendations as CSV",
-                data=csv,
-                file_name="my_movie_recommendations.csv",
-                mime="text/csv"
-            )
+                            </div>
+                        """, unsafe_allow_html=True)
+                        
+                        st.caption(f"🎭 {row['genres'][:50]}...")
+        
+        # Download option
+        st.markdown("---")
+        csv = results.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Recommendations as CSV",
+            data=csv,
+            file_name="my_movie_recommendations.csv",
+            mime="text/csv"
+        )
             
     except Exception as e:
         st.error(f"❌ Error generating recommendations: {str(e)}")
