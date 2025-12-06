@@ -362,36 +362,37 @@ if st.session_state.show_recommendations and st.session_state.favorites:
                 favorite_genres.update(genres[:3])  # Top 3 genres
                 directors = movie_details['directors'].split(', ')
                 favorite_directors.update(directors[:2])  # Top 2 directors
-            # Create explanation
-            st.markdown("---")
-            st.markdown("### 📋 Your Selections")
-            # Display chosen movies
-            if len(favorite_list) <= 5:
-                movies_text = ", ".join([f"**{m}**" for m in favorite_list])
-            else:
-                movies_text = ", ".join([f"**{m}**" for m in favorite_list[:5]]) + f" and **{len(favorite_list)-5} more**"
-            
-            st.markdown(f"You chose: {movies_text}")
-            # Overall explanation
-            explanation_parts = []
-            if favorite_genres:
-                top_genres = list(favorite_genres)[:3]
-                explanation_parts.append(f"you enjoy **{', '.join(top_genres)}** genres")
-            if favorite_directors:
-                top_directors = list(favorite_directors)[:2]
-                explanation_parts.append(f"you like films by **{', '.join(top_directors)}**")
-            
-            if explanation_parts:
-                explanation = " and ".join(explanation_parts)
-                st.info(f"💡 **Why these recommendations?** Based on your selections, we found that {explanation}. We've matched you with similar movies that share these elements!")
-            else:
-                st.info(f"💡 **Why these recommendations?** We analyzed the themes, styles, and characteristics of your favorite movies to find similar films you'll love!")
-            
-            st.markdown("---")
-    
-            if st.button("🔙 Back to Browse", key="back_browse_main"):
-                st.session_state.show_recommendations = False
-                st.rerun()
+        
+        # Create explanation
+        st.markdown("---")
+        st.markdown("### 📋 Your Selections")
+        # Display chosen movies
+        if len(favorite_list) <= 5:
+            movies_text = ", ".join([f"**{m}**" for m in favorite_list])
+        else:
+            movies_text = ", ".join([f"**{m}**" for m in favorite_list[:5]]) + f" and **{len(favorite_list)-5} more**"
+        
+        st.markdown(f"You chose: {movies_text}")
+        # Overall explanation
+        explanation_parts = []
+        if favorite_genres:
+            top_genres = list(favorite_genres)[:3]
+            explanation_parts.append(f"you enjoy **{', '.join(top_genres)}** genres")
+        if favorite_directors:
+            top_directors = list(favorite_directors)[:2]
+            explanation_parts.append(f"you like films by **{', '.join(top_directors)}**")
+        
+        if explanation_parts:
+            explanation = " and ".join(explanation_parts)
+            st.info(f"💡 **Why these recommendations?** Based on your selections, we found that {explanation}. We've matched you with similar movies that share these elements!")
+        else:
+            st.info(f"💡 **Why these recommendations?** We analyzed the themes, styles, and characteristics of your favorite movies to find similar films you'll love!")
+        
+        st.markdown("---")
+
+        if st.button("🔙 Back to Browse", key="back_browse_main"):
+            st.session_state.show_recommendations = False
+            st.rerun()
             
             # Get full data with posters for recommendations
             rec_movies = recommender.full_df[recommender.full_df['title'].isin(results['title'].tolist())]
