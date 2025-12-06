@@ -13,14 +13,19 @@ class MovieRecommender:
         """Initialize the Movie Recommender with data loading and preprocessing"""
         # Use sample datasets if full datasets don't exist (for deployment)
         import os
-        if not os.path.exists(data_path) and os.path.exists('movies_preprocessed_model_sample.csv'):
+        
+        # Check if full dataset exists, otherwise use sample
+        if os.path.exists(data_path):
+            full_data_path = 'movies_cleaned_full.csv'
+            print(f'🎬 Loading {data_path} ...')
+        elif os.path.exists('movies_preprocessed_model_sample.csv'):
             data_path = 'movies_preprocessed_model_sample.csv'
             full_data_path = 'movies_cleaned_full_sample.csv'
             print("📦 Using sample dataset (20K movies) for deployment")
+            print(f'🎬 Loading {data_path} ...')
         else:
-            full_data_path = 'movies_cleaned_full.csv'
+            raise FileNotFoundError("No dataset files found! Need either full or sample CSV files.")
         
-        print(f'🎬 Loading {data_path} ...')
         self.model_df = pd.read_csv(data_path, low_memory=False)
         
         # Load full cleaned CSV for poster paths and extra fields
