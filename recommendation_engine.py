@@ -11,12 +11,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 class MovieRecommender:
     def __init__(self, data_path='movies_preprocessed_model.csv', use_cache=True):
         """Initialize the Movie Recommender with data loading and preprocessing"""
+        # Use sample datasets if full datasets don't exist (for deployment)
+        import os
+        if not os.path.exists(data_path) and os.path.exists('movies_preprocessed_model_sample.csv'):
+            data_path = 'movies_preprocessed_model_sample.csv'
+            full_data_path = 'movies_cleaned_full_sample.csv'
+            print("📦 Using sample dataset (20K movies) for deployment")
+        else:
+            full_data_path = 'movies_cleaned_full.csv'
+        
         print(f'🎬 Loading {data_path} ...')
         self.model_df = pd.read_csv(data_path, low_memory=False)
         
         # Load full cleaned CSV for poster paths and extra fields
         print(f'📂 Loading full dataset for poster paths...')
-        self.full_df = pd.read_csv('movies_cleaned_full.csv', low_memory=False)
+        self.full_df = pd.read_csv(full_data_path, low_memory=False)
         
         required_cols = ['title', 'genres', 'keywords', 'cast', 'directors', 'overview']
         missing = [c for c in required_cols if c not in self.model_df.columns]
