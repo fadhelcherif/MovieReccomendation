@@ -11,26 +11,30 @@ from sklearn.metrics.pairwise import cosine_similarity
 class MovieRecommender:
     def __init__(self, data_path='movies_preprocessed_model.csv', use_cache=True):
         """Initialize the Movie Recommender with data loading and preprocessing"""
-        # Use sample datasets if full datasets don't exist (for deployment)
-        import os
-        
-        # Check if full dataset exists, otherwise use sample
+        # Determine which dataset to use (full or sample)
         if os.path.exists(data_path):
-            full_data_path = 'movies_cleaned_full.csv'
-            print(f'🎬 Loading {data_path} ...')
+            # Full dataset exists (local development)
+            model_file = data_path
+            full_file = 'movies_cleaned_full.csv'
+            print(f'🎬 Loading full dataset: {model_file}')
         elif os.path.exists('movies_preprocessed_model_sample.csv'):
-            data_path = 'movies_preprocessed_model_sample.csv'
-            full_data_path = 'movies_cleaned_full_sample.csv'
-            print("📦 Using sample dataset (20K movies) for deployment")
-            print(f'🎬 Loading {data_path} ...')
+            # Use sample dataset (deployment)
+            model_file = 'movies_preprocessed_model_sample.csv'
+            full_file = 'movies_cleaned_full_sample.csv'
+            print("📦 Using sample dataset (20K movies)")
+            print(f'🎬 Loading {model_file}')
         else:
-            raise FileNotFoundError("No dataset files found! Need either full or sample CSV files.")
+            raise FileNotFoundError(
+                "Dataset files not found! Expected either:\n"
+                "  - movies_preprocessed_model.csv (full dataset), or\n"
+                "  - movies_preprocessed_model_sample.csv (sample dataset)"
+            )
         
-        self.model_df = pd.read_csv(data_path, low_memory=False)
+        self.model_df = pd.read_csv(model_file, low_memory=False)
         
         # Load full cleaned CSV for poster paths and extra fields
-        print(f'📂 Loading full dataset for poster paths...')
-        self.full_df = pd.read_csv(full_data_path, low_memory=False)
+        print(f'📂 Loading poster dataset: {full_file}')
+        self.full_df = pd.read_csv(full_file, low_memory=False)
         
         required_cols = ['title', 'genres', 'keywords', 'cast', 'directors', 'overview']
         missing = [c for c in required_cols if c not in self.model_df.columns]
