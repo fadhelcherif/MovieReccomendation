@@ -6,38 +6,27 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-
 class MovieRecommender:
     def __init__(self, data_path="movies_preprocessed_model_sample.csv"):
-
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.data_path = os.path.join(self.base_dir, data_path)
-
         if not os.path.exists(self.data_path):
             raise FileNotFoundError(f"Dataset not found: {self.data_path}")
-
-
-        print(f"📂 Loading dataset: {self.data_path}")
+        print(f"4c2 Loading dataset: {self.data_path}")
         self.model_df = pd.read_csv(self.data_path, low_memory=False)
         print(f"[DEBUG] Loaded DataFrame shape: {self.model_df.shape}")
         print(f"[DEBUG] Loaded DataFrame columns: {list(self.model_df.columns)}")
         print(f"[DEBUG] First 2 rows:\n{self.model_df.head(2).to_dict()}")
-
         self.model_df = self.model_df[self.model_df["title"].notna()].reset_index(drop=True)
-
         if "vote_average" in self.model_df.columns:
             self.model_df = self.model_df[self.model_df["vote_average"] >= 6.0]
-
         for col in ["genres", "keywords", "cast", "directors"]:
             if col in self.model_df.columns:
                 self.model_df[col] = self.model_df[col].apply(self._parse_list_col)
-
         self.model_df["overview"] = self.model_df["overview"].fillna("")
-
         print(f"[DEBUG] DataFrame after cleaning shape: {self.model_df.shape}")
         print(f"[DEBUG] DataFrame after cleaning columns: {list(self.model_df.columns)}")
         print(f"[DEBUG] DataFrame after cleaning first 2 rows:\n{self.model_df.head(2).to_dict()}")
-
         self._build_features()
 
     # ---------------- helpers ----------------
@@ -49,8 +38,8 @@ class MovieRecommender:
         try:
             return ast.literal_eval(str(x))
         except (ValueError, SyntaxError):
-            return [i.strip() for i in str(x).split(",")] 
-    
+            return [i.strip() for i in str(x).split(",")]
+
     def _clean(self, text):
         return str(text).replace(" ", "").lower()
 
