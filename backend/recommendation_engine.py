@@ -1,9 +1,10 @@
-﻿import pandas as pd
-import numpy as np
+﻿
 import ast
 import os
+import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 class MovieRecommender:
@@ -47,9 +48,9 @@ class MovieRecommender:
             return []
         try:
             return ast.literal_eval(str(x))
-        except:
-            return [i.strip() for i in str(x).split(",")]
-
+        except (ValueError, SyntaxError):
+            return [i.strip() for i in str(x).split(",")] 
+    
     def _clean(self, text):
         return str(text).replace(" ", "").lower()
 
