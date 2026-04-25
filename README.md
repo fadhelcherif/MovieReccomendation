@@ -1,98 +1,84 @@
-/*
-===========================================================
-                   CineMatch – Movie Recommendation System
-===========================================================
+# Movie Recommendation System
 
-[Streamlit App Badge]
+## Description
+A modern movie recommendation web application with a FastAPI backend and a Streamlit frontend. The backend serves ML-powered recommendations, while the frontend provides an interactive poster-based interface for users to select favorites and view suggestions.
 
-CineMatch is a movie recommendation system based on TF-IDF and 
-content-based filtering. It provides personalized suggestions 
-through a simple interface built around movie posters, search, 
-and filtering options.
+## Architecture
 
------------------------------------------------------------
-Features
------------------------------------------------------------
-- Personalized recommendations
-- Poster-based browsing
-- Favorites list
-- Mood filters (Cozy, Mind-bending, Feel-good, etc.)
-- Search by title, actor, director, or keywords
-- Rating filters
-- TF-IDF + cosine similarity engine
+```
++-------------------+        REST API        +-------------------+
+|   Streamlit App   | <-------------------> |    FastAPI App    |
+|  (frontend, 8501) |                      |  (backend, 8000)   |
++-------------------+                      +-------------------+
+```
+- **frontend/**: Streamlit UI, Dockerfile, requirements.txt
+- **backend/**: FastAPI app, ML model, Dockerfile, requirements.txt
+- **docker/**: docker-compose.yml, .dockerignore
+- **k8s/**: (optional) Kubernetes manifests
 
------------------------------------------------------------
-Live Demo
------------------------------------------------------------
-The live app will be available after deployment:
-https://fadhelcherif-moviereccomendation-app-fjqapm.streamlit.app/
------------------------------------------------------------
-Technology Stack
------------------------------------------------------------
-- Streamlit
-- Python, scikit-learn
-- Pandas, NumPy
-- Matplotlib
-- TMDB / IMDB datasets
+## Advanced Git Workflow
 
------------------------------------------------------------
-Project Structure
------------------------------------------------------------
-Movie_recc/
-    app.py
-    recommendation_engine.py
-    movies_cleaned_full.csv
-    movies_preprocessed_model.csv
-    requirements.txt
-    .streamlit/
+- **Branches:**
+  - `main`: Production-ready code
+  - `dev`: Integration branch for features and fixes
+  - `feat/<feature-name>`: New features
+  - `bugfix/<bug-name>`: Bug fixes
+  - `hotfix/<hotfix-name>`: Urgent production fixes
 
------------------------------------------------------------
-How It Works
------------------------------------------------------------
-1. Browse through the movie catalogue
-2. Add movies to favorites
-3. Get recommendations based on similarity
-4. Refine results with filters
+- **Workflow:**
+  1. Create a feature branch: `git checkout -b feat/<feature-name>`
+  2. Commit and push changes: `git push origin feat/<feature-name>`
+  3. Open a Pull Request (PR) to `dev`
+  4. After review, merge PR into `dev`
+  5. When stable, merge `dev` into `main`
+  6. For bugs: `bugfix/<bug-name>` → PR to `dev`
+  7. For urgent prod fixes: `hotfix/<hotfix-name>` → PR to `main` and `dev`
 
------------------------------------------------------------
-Installation
------------------------------------------------------------
-1. Clone and install dependencies:
+## Local Development
 
-    git clone https://github.com/fadhelcherif/MovieReccomendation.git
-    cd MovieReccomendation
-    pip install -r requirements.txt
+### Prerequisites
+- Docker & Docker Compose
+- Python 3.12 (for local runs)
 
-2. Add dataset files (download separately):
+### Run with Docker Compose
+```sh
+cd docker
+docker compose up --build
+```
+- Backend: http://localhost:8001
+- Frontend: http://localhost:8501
 
-    - movies_cleaned_full.csv
-    - movies_preprocessed_model.csv
-    - TMDB/IMDB dataset (optional)
+### Run Manually
+```sh
+# Backend
+cd backend
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
 
-   Place them in the project root directory.
+# Frontend
+cd frontend
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-3. Run the application:
+## Linting & Tests
+```sh
+# Lint
+cd backend
+flake8 .
 
-    streamlit run app.py
+# Tests
+pytest test_main.py
+```
 
-   The app will run at:
-   http://localhost:8501
+## Contributing
+- Follow the branch naming conventions
+- Write clear commit messages
+- Ensure all tests pass before PR
+- Keep code style consistent (flake8)
 
------------------------------------------------------------
-Requirements
------------------------------------------------------------
-Python 3.8+ with libraries listed in requirements.txt
+---
 
------------------------------------------------------------
-Author
------------------------------------------------------------
-Fadhel Cherif
-GitHub: https://github.com/fadhelcherif
-
------------------------------------------------------------
-License
------------------------------------------------------------
-MIT License
-
-===========================================================
-*/
+**Contact:** Maintainer: Your Name <your.email@example.com>

@@ -1,12 +1,12 @@
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../backend'))
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 import uvicorn
 from recommendation_engine import MovieRecommender
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../backend'))
 
 app = FastAPI()
 
@@ -26,6 +26,16 @@ def predict(request: PredictRequest):
         raise HTTPException(status_code=404, detail="No recommendations found.")
     # Return as list of dicts
     return {"recommendations": recs[['title', 'genres', 'directors']].to_dict(orient="records")}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+@app.post("/recommend")
+def recommend(request: PredictRequest):
+    return predict(request)
 
 
 if __name__ == "__main__":
